@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
+using System.Data.Entity;
+using InvaAPI.Models.ProjectModels;
 
 namespace InvaAPI.Models
 {
@@ -16,6 +18,8 @@ namespace InvaAPI.Models
             // Add custom user claims here
             return userIdentity;
         }
+
+        public string Name { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -24,7 +28,10 @@ namespace InvaAPI.Models
             : base("DefaultConnection", throwIfV1Schema: false)
         {
         }
-        
+
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Request> Requests { get; set; }
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
