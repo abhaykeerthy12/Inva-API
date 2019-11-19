@@ -16,6 +16,7 @@ using Microsoft.Owin.Security.OAuth;
 using InvaAPI.Models;
 using InvaAPI.Providers;
 using InvaAPI.Results;
+using System.Linq;
 
 namespace InvaAPI.Controllers
 {
@@ -264,7 +265,9 @@ namespace InvaAPI.Controllers
                 ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
                     CookieAuthenticationDefaults.AuthenticationType);
 
-                AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.UserName);
+                List<Claim> roles = oAuthIdentity.Claims.Where(c => c.Type == ClaimTypes.Role).ToList();
+
+                AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.UserName, Newtonsoft.Json.JsonConvert.SerializeObject(roles.Select(x => x.Value)));
                 Authentication.SignIn(properties, oAuthIdentity, cookieIdentity);
             }
             else

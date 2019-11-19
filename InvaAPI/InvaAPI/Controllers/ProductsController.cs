@@ -14,6 +14,7 @@ using InvaAPI.Models.ProjectModels;
 
 namespace InvaAPI.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ProductsController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
