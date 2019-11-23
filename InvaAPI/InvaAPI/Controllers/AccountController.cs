@@ -79,7 +79,7 @@ namespace InvaAPI.Controllers
         [Route("ManageInfo")]
         public async Task<ManageInfoViewModel> GetManageInfo(string returnUrl, bool generateState = false)
         {
-            IdentityUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            IdentityUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId()).ConfigureAwait(false);
 
             if (user == null)
             {
@@ -125,7 +125,7 @@ namespace InvaAPI.Controllers
             }
 
             IdentityResult result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword,
-                model.NewPassword);
+                model.NewPassword).ConfigureAwait(false);
             
             if (!result.Succeeded)
             {
@@ -144,7 +144,7 @@ namespace InvaAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            IdentityResult result = await UserManager.AddPasswordAsync(User.Identity.GetUserId(), model.NewPassword);
+            IdentityResult result = await UserManager.AddPasswordAsync(User.Identity.GetUserId(), model.NewPassword).ConfigureAwait(false);
 
             if (!result.Succeeded)
             {
@@ -182,7 +182,7 @@ namespace InvaAPI.Controllers
             }
 
             IdentityResult result = await UserManager.AddLoginAsync(User.Identity.GetUserId(),
-                new UserLoginInfo(externalData.LoginProvider, externalData.ProviderKey));
+                new UserLoginInfo(externalData.LoginProvider, externalData.ProviderKey)).ConfigureAwait(false);
 
             if (!result.Succeeded)
             {
@@ -205,12 +205,12 @@ namespace InvaAPI.Controllers
 
             if (model.LoginProvider == LocalLoginProvider)
             {
-                result = await UserManager.RemovePasswordAsync(User.Identity.GetUserId());
+                result = await UserManager.RemovePasswordAsync(User.Identity.GetUserId()).ConfigureAwait(false);
             }
             else
             {
                 result = await UserManager.RemoveLoginAsync(User.Identity.GetUserId(),
-                    new UserLoginInfo(model.LoginProvider, model.ProviderKey));
+                    new UserLoginInfo(model.LoginProvider, model.ProviderKey)).ConfigureAwait(false);
             }
 
             if (!result.Succeeded)
@@ -252,7 +252,7 @@ namespace InvaAPI.Controllers
             }
 
             ApplicationUser user = await UserManager.FindAsync(new UserLoginInfo(externalLogin.LoginProvider,
-                externalLogin.ProviderKey));
+                externalLogin.ProviderKey)).ConfigureAwait(false);
 
             bool hasRegistered = user != null;
 
@@ -261,9 +261,9 @@ namespace InvaAPI.Controllers
                 Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
                 
                  ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
-                    OAuthDefaults.AuthenticationType);
+                    OAuthDefaults.AuthenticationType).ConfigureAwait(false);
                 ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
-                    CookieAuthenticationDefaults.AuthenticationType);
+                    CookieAuthenticationDefaults.AuthenticationType).ConfigureAwait(false);
 
                 List<Claim> roles = oAuthIdentity.Claims.Where(c => c.Type == ClaimTypes.Role).ToList();
 
@@ -333,7 +333,7 @@ namespace InvaAPI.Controllers
 
             var user = new ApplicationUser() { UserName = model.Email, Email = model.Email, Name = model.Name };
 
-            IdentityResult result = await UserManager.CreateAsync(user, model.Password);
+            IdentityResult result = await UserManager.CreateAsync(user, model.Password).ConfigureAwait(false);
 
             if (!result.Succeeded)
             {
@@ -354,7 +354,7 @@ namespace InvaAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var info = await Authentication.GetExternalLoginInfoAsync();
+            var info = await Authentication.GetExternalLoginInfoAsync().ConfigureAwait(false);
             if (info == null)
             {
                 return InternalServerError();
@@ -362,13 +362,13 @@ namespace InvaAPI.Controllers
 
             var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
 
-            IdentityResult result = await UserManager.CreateAsync(user);
+            IdentityResult result = await UserManager.CreateAsync(user).ConfigureAwait(false);
             if (!result.Succeeded)
             {
                 return GetErrorResult(result);
             }
 
-            result = await UserManager.AddLoginAsync(user.Id, info.Login);
+            result = await UserManager.AddLoginAsync(user.Id, info.Login).ConfigureAwait(false);
             if (!result.Succeeded)
             {
                 return GetErrorResult(result); 
@@ -481,7 +481,7 @@ namespace InvaAPI.Controllers
 
                 if (strengthInBits % bitsPerByte != 0)
                 {
-                    throw new ArgumentException("strengthInBits must be evenly divisible by 8.", "strengthInBits");
+                    throw new ArgumentException("strengthInBits must be evenly divisible by 8.", nameof(strengthInBits));
                 }
 
                 int strengthInBytes = strengthInBits / bitsPerByte;

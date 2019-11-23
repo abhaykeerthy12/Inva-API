@@ -11,24 +11,39 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using InvaAPI.Models;
 using InvaAPI.Models.ProjectModels;
+using Microsoft.AspNet.Identity;
 
 namespace InvaAPI.Controllers
 {
+    [Authorize]
     public class RequestsController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: api/Requests
-        public IQueryable<Request> GetRequests()
+        public IHttpActionResult GetRequest()
         {
-            return db.Requests;
+            var userId = System.Web.HttpContext.Current.User.Identity.GetUserId();
+            var request = db.Requests
+                            .Select(r => new 
+                            { 
+                                RequestId = r.Id,
+                                EmployeeId = r.EmployeeId,
+                                CurrentUserId = userId,
+                                ProductId = r.ProductId,
+                                Quantity = r.Quantity,
+                                Status = r.Status,
+                                RequestedDate = r.RequestedDate
+                            });
+
+            return Ok(request);
         }
 
         // GET: api/Requests/5
         [ResponseType(typeof(Request))]
         public async Task<IHttpActionResult> GetRequest(Guid id)
         {
-            Request request = await db.Requests.FindAsync(id);
+            Request request = await db.Requests.FindAsync(id).ConfigureAwait(false);
             if (request == null)
             {
                 return NotFound();
@@ -46,6 +61,11 @@ namespace InvaAPI.Controllers
                 return BadRequest(ModelState);
             }
 
+            if(request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             if (id != request.Id)
             {
                 return BadRequest();
@@ -55,7 +75,7 @@ namespace InvaAPI.Controllers
 
             try
             {
-                await db.SaveChangesAsync();
+                await db.SaveChangesAsync().ConfigureAwait(false);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -81,8 +101,13 @@ namespace InvaAPI.Controllers
                 return BadRequest(ModelState);
             }
 
+            if(request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             db.Requests.Add(request);
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync().ConfigureAwait(false);
 
             return CreatedAtRoute("DefaultApi", new { id = request.Id }, request);
         }
@@ -91,14 +116,14 @@ namespace InvaAPI.Controllers
         [ResponseType(typeof(Request))]
         public async Task<IHttpActionResult> DeleteRequest(Guid id)
         {
-            Request request = await db.Requests.FindAsync(id);
+            Request request = await db.Requests.FindAsync(id).ConfigureAwait(false);
             if (request == null)
             {
                 return NotFound();
             }
 
             db.Requests.Remove(request);
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync().ConfigureAwait(false);
 
             return Ok(request);
         }
@@ -114,7 +139,7 @@ namespace InvaAPI.Controllers
 
         private bool RequestExists(Guid id)
         {
-            return db.Requests.Count(e => e.Id == id) > 0;
+            return db.Requests.Any(e => e.Id == id);
         }
     }
 }

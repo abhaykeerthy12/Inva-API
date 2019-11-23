@@ -21,7 +21,7 @@ namespace InvaAPI.Providers
         {
             if (publicClientId == null)
             {
-                throw new ArgumentNullException("publicClientId");
+                throw new ArgumentNullException(nameof(publicClientId));
             }
 
             _publicClientId = publicClientId;
@@ -31,7 +31,7 @@ namespace InvaAPI.Providers
         {
             var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
 
-            ApplicationUser user = await userManager.FindAsync(context.UserName, context.Password);
+            ApplicationUser user = await userManager.FindAsync(context.UserName, context.Password).ConfigureAwait(false);
 
             if (user == null)
             {
@@ -40,9 +40,9 @@ namespace InvaAPI.Providers
             }
 
             ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager,
-               OAuthDefaults.AuthenticationType);
+               OAuthDefaults.AuthenticationType).ConfigureAwait(false);
             ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,
-                CookieAuthenticationDefaults.AuthenticationType);
+                CookieAuthenticationDefaults.AuthenticationType).ConfigureAwait(false);
 
             List<Claim> roles = oAuthIdentity.Claims.Where(c => c.Type == ClaimTypes.Role).ToList();
 

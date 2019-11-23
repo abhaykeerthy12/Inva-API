@@ -91,7 +91,7 @@ namespace InvaAPI.Areas.HelpPage
         {
             if (api == null)
             {
-                throw new ArgumentNullException("api");
+                throw new ArgumentNullException(nameof(api));
             }
             string controllerName = api.ActionDescriptor.ControllerDescriptor.ControllerName;
             string actionName = api.ActionDescriptor.ActionName;
@@ -239,7 +239,7 @@ namespace InvaAPI.Areas.HelpPage
             }
             if (api == null)
             {
-                throw new ArgumentNullException("api");
+                throw new ArgumentNullException(nameof(api));
             }
             Type type;
             if (ActualHttpMessageTypes.TryGetValue(new HelpPageSampleKey(sampleDirection, controllerName, actionName, parameterNames), out type) ||
@@ -289,11 +289,11 @@ namespace InvaAPI.Areas.HelpPage
         {
             if (formatter == null)
             {
-                throw new ArgumentNullException("formatter");
+                throw new ArgumentNullException(nameof(formatter));
             }
             if (mediaType == null)
             {
-                throw new ArgumentNullException("mediaType");
+                throw new ArgumentNullException(nameof(mediaType));
             }
 
             object sample = String.Empty;

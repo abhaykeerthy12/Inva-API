@@ -30,6 +30,7 @@ namespace InvaAPI.Models.ProjectModels
         public Request()
         {
             this.RequestedDate = DateTime.Now;
+            this.Status = "Pending";
         }
     }
 }

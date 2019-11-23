@@ -360,7 +360,7 @@ namespace InvaAPI.Areas.HelpPage
                     return null;
                 }
 
-                result = defaultCtor.Invoke(new object[0]);
+                result = defaultCtor.Invoke(Array.Empty<object>());
             }
             createdObjectReferences.Add(type, result);
             SetPublicProperties(type, result, createdObjectReferences);

@@ -9,7 +9,7 @@ using System.Web.Routing;
 
 namespace InvaAPI
 {
-    public class WebApiApplication : System.Web.HttpApplication
+    public class WebApiApplication : HttpApplication
     {
         protected void Application_Start()
         {

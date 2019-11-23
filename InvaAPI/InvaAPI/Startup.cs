@@ -8,9 +8,9 @@ using Owin;
 
 namespace InvaAPI
 {
-    public partial class Startup
+    public static partial class Startup
     {
-        public void Configuration(IAppBuilder app)
+        public static void Configuration(IAppBuilder app)
         {
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             ConfigureAuth(app);

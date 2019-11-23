@@ -11,25 +11,39 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using InvaAPI.Models;
 using InvaAPI.Models.ProjectModels;
+using Microsoft.AspNet.Identity;
 
 namespace InvaAPI.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class ProductsController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: api/Products
-        public IQueryable<Product> GetProducts()
+        public IHttpActionResult GetProducts()
         {
-            return db.Products;
+            var userId = System.Web.HttpContext.Current.User.Identity.GetUserId();
+
+            var product = db.Products
+                            .Select(p => new
+                            {
+                                CurrentUserId = userId,
+                                Id = p.Id,
+                                Name = p.Name,
+                                Type = p.Type,
+                                Quantity = p.Quantity,
+                                Price = p.Price
+                            });
+
+            return Ok(product);
         }
 
         // GET: api/Products/5
         [ResponseType(typeof(Product))]
         public async Task<IHttpActionResult> GetProduct(Guid id)
         {
-            Product product = await db.Products.FindAsync(id);
+            Product product = await db.Products.FindAsync(id).ConfigureAwait(false);
             if (product == null)
             {
                 return NotFound();
@@ -39,12 +53,19 @@ namespace InvaAPI.Controllers
         }
 
         // PUT: api/Products/5
+        [OverrideAuthentication]
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutProduct(Guid id, Product product)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+
+            if(product == null)
+            {
+                throw new ArgumentNullException(nameof(product));
             }
 
             if (id != product.Id)
@@ -56,7 +77,7 @@ namespace InvaAPI.Controllers
 
             try
             {
-                await db.SaveChangesAsync();
+                await db.SaveChangesAsync().ConfigureAwait(false);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -74,6 +95,8 @@ namespace InvaAPI.Controllers
         }
 
         // POST: api/Products
+        [OverrideAuthentication]
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(Product))]
         public async Task<IHttpActionResult> PostProduct(Product product)
         {
@@ -82,24 +105,31 @@ namespace InvaAPI.Controllers
                 return BadRequest(ModelState);
             }
 
+            if(product == null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+
             db.Products.Add(product);
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync().ConfigureAwait(false);
 
             return CreatedAtRoute("DefaultApi", new { id = product.Id }, product);
         }
 
         // DELETE: api/Products/5
+        [OverrideAuthentication]
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(Product))]
         public async Task<IHttpActionResult> DeleteProduct(Guid id)
         {
-            Product product = await db.Products.FindAsync(id);
+            Product product = await db.Products.FindAsync(id).ConfigureAwait(false);
             if (product == null)
             {
                 return NotFound();
             }
 
             db.Products.Remove(product);
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync().ConfigureAwait(false);
 
             return Ok(product);
         }
@@ -115,7 +145,7 @@ namespace InvaAPI.Controllers
 
         private bool ProductExists(Guid id)
         {
-            return db.Products.Count(e => e.Id == id) > 0;
+            return db.Products.Any(e => e.Id == id);
         }
     }
 }
