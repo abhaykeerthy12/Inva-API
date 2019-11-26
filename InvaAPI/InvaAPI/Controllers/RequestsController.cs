@@ -12,6 +12,7 @@ using System.Web.Http.Description;
 using InvaAPI.Models;
 using InvaAPI.Models.ProjectModels;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace InvaAPI.Controllers
 {
@@ -24,9 +25,10 @@ namespace InvaAPI.Controllers
         public IHttpActionResult GetRequest()
         {
             var userId = System.Web.HttpContext.Current.User.Identity.GetUserId();
+
             var request = db.Requests
-                            .Select(r => new 
-                            { 
+                            .Select(r => new
+                            {
                                 RequestId = r.Id,
                                 EmployeeId = r.EmployeeId,
                                 CurrentUserId = userId,
@@ -56,10 +58,6 @@ namespace InvaAPI.Controllers
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutRequest(Guid id, Request request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
             if(request == null)
             {
@@ -116,14 +114,14 @@ namespace InvaAPI.Controllers
         [ResponseType(typeof(Request))]
         public async Task<IHttpActionResult> DeleteRequest(Guid id)
         {
-            Request request = await db.Requests.FindAsync(id).ConfigureAwait(false);
+            Request request = await db.Requests.FindAsync(id).ConfigureAwait(true);
             if (request == null)
             {
                 return NotFound();
             }
 
             db.Requests.Remove(request);
-            await db.SaveChangesAsync().ConfigureAwait(false);
+            await db.SaveChangesAsync().ConfigureAwait(true);
 
             return Ok(request);
         }

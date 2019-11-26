@@ -1,4 +1,5 @@
 ﻿using InvaAPI.Models;
+using InvaAPI.Models.ProjectModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
@@ -10,6 +11,8 @@ using System.Web.Http;
 
 namespace InvaAPI.Controllers
 {
+    [Authorize]
+    [RoutePrefix("api/roles")]
     public class RolesController : ApiController
     {
 
@@ -17,29 +20,43 @@ namespace InvaAPI.Controllers
         // GET: /api/roles
         public IHttpActionResult GetRoles()
         {
-            var roleStore = new RoleStore<IdentityRole>(new ApplicationDbContext());
-            var roleManager = new RoleManager<IdentityRole>(roleStore);
+            var roleContext = new ApplicationDbContext();
 
-            var roles = roleManager.Roles
-                        .Select(r => new 
-                            { 
-                                Id = r.Id,
-                                Name = r.Name
-                            } ) ;
+            var roles = roleContext.Roles
+                        .Select(r => new
+                        {
+                            Id = r.Id,
+                            Name = r.Name
+                        });
             return Ok(roles);
         }
 
-        //[HttpGet]
-        //[Route("api/userroles/{id}")]
-        //// GET: /api/roles
-        //public IHttpActionResult GetUserRoles(Guid Id)
-        //{
-        //    var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
-        //    var userManager = new UserManager<ApplicationUser>(userStore);
+        [Route("GetUserRoles")]
+        // GET: /api/roles
+        public IHttpActionResult GetUserRoles()
+        {
+            var identityDbContext = new IdentityDbContext();
 
-        //    var userroles = userManager.GetRoles(Id);
-        //    return Ok(userroles);
-        //}
+            var identityRole = identityDbContext.Users.Select(r => new{ 
+                                                        Id = r.Id,
+                                                        Roles = r.Roles,
+                                                        Email = r.Email
+                                                    });
+            return Ok(identityRole);
+        }
+
+        // make a user admin
+        [HttpPost]
+        // POST: /api/roles
+        public IHttpActionResult PostRoles(UserRoleClass userRole)
+        {
+            var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
+            var manager = new UserManager<ApplicationUser>(userStore);
+            manager.AddToRole(userRole.Id, userRole.Role);
+            return Ok();
+        }
+
+
 
 
     }

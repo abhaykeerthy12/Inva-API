@@ -53,15 +53,10 @@ namespace InvaAPI.Controllers
         }
 
         // PUT: api/Products/5
-        [OverrideAuthentication]
         [Authorize(Roles = "Admin")]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutProduct(Guid id, Product product)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
             if(product == null)
             {
@@ -95,8 +90,7 @@ namespace InvaAPI.Controllers
         }
 
         // POST: api/Products
-        [OverrideAuthentication]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles="Admin")]
         [ResponseType(typeof(Product))]
         public async Task<IHttpActionResult> PostProduct(Product product)
         {
@@ -117,19 +111,18 @@ namespace InvaAPI.Controllers
         }
 
         // DELETE: api/Products/5
-        [OverrideAuthentication]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles="Admin")]
         [ResponseType(typeof(Product))]
         public async Task<IHttpActionResult> DeleteProduct(Guid id)
         {
-            Product product = await db.Products.FindAsync(id).ConfigureAwait(false);
+            Product product = await db.Products.FindAsync(id).ConfigureAwait(true);
             if (product == null)
             {
                 return NotFound();
             }
 
             db.Products.Remove(product);
-            await db.SaveChangesAsync().ConfigureAwait(false);
+            await db.SaveChangesAsync().ConfigureAwait(true);
 
             return Ok(product);
         }

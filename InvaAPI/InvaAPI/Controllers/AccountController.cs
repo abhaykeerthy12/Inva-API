@@ -67,6 +67,26 @@ namespace InvaAPI.Controllers
             };
         }
 
+        [Authorize]
+        [HttpGet]
+        [Route("AllUserData")]
+        // Get api/Account/AllUserData
+        public IHttpActionResult AllUserData()
+        {
+            // get employee names
+            var userContext = new ApplicationDbContext();
+            var users = userContext.Users
+                        .Select(u => new
+                        {                          
+                            Id = u.Id,
+                            Email = u.Email,
+                            Name = u.Name
+                        });
+
+            return Ok(users);
+
+        }
+
         // POST api/Account/Logout
         [Route("Logout")]
         public IHttpActionResult Logout()
