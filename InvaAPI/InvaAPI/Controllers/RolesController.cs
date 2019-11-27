@@ -52,7 +52,14 @@ namespace InvaAPI.Controllers
         {
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
-            manager.AddToRole(userRole.Id, userRole.Role);
+            if (userRole.Role == "Admin")
+            {
+                manager.AddToRole(userRole.Id, userRole.Role);
+            }
+            else if(userRole.Role == "User")
+            {
+                manager.RemoveFromRole(userRole.Id, "Admin");
+            }
             return Ok();
         }
 

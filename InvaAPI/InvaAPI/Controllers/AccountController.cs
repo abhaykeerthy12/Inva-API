@@ -77,11 +77,14 @@ namespace InvaAPI.Controllers
         // Get api/Account/AllUserData
         public IHttpActionResult AllUserData()
         {
+            var userId = System.Web.HttpContext.Current.User.Identity.GetUserId();
+
             // get employee names
             var userContext = new ApplicationDbContext();
             var users = userContext.Users
                         .Select(u => new
-                        {                          
+                        {             
+                            CurrentUserId = userId,
                             Id = u.Id,
                             Email = u.Email,
                             Name = u.Name,
