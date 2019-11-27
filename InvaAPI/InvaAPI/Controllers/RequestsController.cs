@@ -107,6 +107,8 @@ namespace InvaAPI.Controllers
             db.Requests.Add(request);
             await db.SaveChangesAsync().ConfigureAwait(false);
 
+            // sent mail to admins
+
             return CreatedAtRoute("DefaultApi", new { id = request.Id }, request);
         }
 

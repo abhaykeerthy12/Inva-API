@@ -280,6 +280,7 @@
     <Compile Include="Models\ProjectModels\Request.cs" />
     <Compile Include="Models\ProjectModels\UserPatch.cs" />
     <Compile Include="Models\ProjectModels\UserRoleClass.cs" />
+    <Compile Include="Models\ProjectModels\UserUpdateModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />

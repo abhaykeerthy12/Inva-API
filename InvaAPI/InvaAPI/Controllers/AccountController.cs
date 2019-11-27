@@ -95,7 +95,7 @@ namespace InvaAPI.Controllers
 
         }
 
-        // PUT: api/Products/5
+        // PATCH /api/account/useractive
         [Authorize(Roles = "Admin")]
         [HttpPatch]
         [Route("UserActive")]
@@ -161,6 +161,26 @@ namespace InvaAPI.Controllers
                 Logins = logins,
                 ExternalLoginProviders = GetExternalLogins(returnUrl, generateState)
             };
+        }
+
+        // PUT api/Account/UpdateUser
+        [HttpPut]
+        [Route("UpdateUser")]
+        public async Task<IHttpActionResult> UpdateUser(UserUpdateModel model)
+        {
+            var userscontext = new ApplicationDbContext();
+
+            var userelement = userscontext.Users.FirstOrDefault(u => u.Id == model.Id);
+            if (userelement == null)
+                return NotFound();
+            else
+            {
+                userelement.Name = model.Name;
+                userelement.Email = model.Email;
+                userelement.UserName = model.Email;
+                await userscontext.SaveChangesAsync().ConfigureAwait(false);
+            }
+            return Ok();
         }
 
         // POST api/Account/ChangePassword
