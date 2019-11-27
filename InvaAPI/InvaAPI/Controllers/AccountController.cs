@@ -17,6 +17,10 @@ using InvaAPI.Models;
 using InvaAPI.Providers;
 using InvaAPI.Results;
 using System.Linq;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Net;
+using InvaAPI.Models.ProjectModels;
 
 namespace InvaAPI.Controllers
 {
@@ -80,11 +84,32 @@ namespace InvaAPI.Controllers
                         {                          
                             Id = u.Id,
                             Email = u.Email,
-                            Name = u.Name
+                            Name = u.Name,
+                            IsActive = u.IsActive
                         });
 
             return Ok(users);
 
+        }
+
+        // PUT: api/Products/5
+        [Authorize(Roles = "Admin")]
+        [HttpPatch]
+        [Route("UserActive")]
+        public IHttpActionResult UserActive(UserPatch user)
+        {
+
+            var userscontext = new ApplicationDbContext();
+
+            var userelement = userscontext.Users.FirstOrDefault(u => u.Id == user.Id);
+            if (userelement == null)
+                return NotFound();
+            else
+            {
+                userelement.IsActive = user.IsActive;
+                userscontext.SaveChangesAsync();
+            }
+            return Ok();
         }
 
         // POST api/Account/Logout
