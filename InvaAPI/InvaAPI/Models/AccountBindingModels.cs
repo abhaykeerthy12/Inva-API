@@ -50,6 +50,7 @@ namespace InvaAPI.Models
         public string ConfirmPassword { get; set; }
 
         public string Name { get; set; }
+        public bool IsActive { get; set; }
 
     }
 

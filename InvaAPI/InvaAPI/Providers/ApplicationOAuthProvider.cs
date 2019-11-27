@@ -39,6 +39,12 @@ namespace InvaAPI.Providers
                 return;
             }
 
+            if (user.IsActive == false)
+            {
+                context.SetError("User_Inactive", "The user is invactive pls contact admin!.");
+                return;
+            }
+
             ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager,
                OAuthDefaults.AuthenticationType).ConfigureAwait(false);
             ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,

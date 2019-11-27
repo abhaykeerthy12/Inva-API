@@ -248,6 +248,30 @@
     <Compile Include="Migrations\201911232007467_AddedRestrictionsToRequests.Designer.cs">
       <DependentUpon>201911232007467_AddedRestrictionsToRequests.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201911270400451_addedIsActive.cs" />
+    <Compile Include="Migrations\201911270400451_addedIsActive.Designer.cs">
+      <DependentUpon>201911270400451_addedIsActive.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911270404209_removedIsActive.cs" />
+    <Compile Include="Migrations\201911270404209_removedIsActive.Designer.cs">
+      <DependentUpon>201911270404209_removedIsActive.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911270405340_addedIsActiveBack.cs" />
+    <Compile Include="Migrations\201911270405340_addedIsActiveBack.Designer.cs">
+      <DependentUpon>201911270405340_addedIsActiveBack.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911270413553_addedIsActiveBack-v2.cs" />
+    <Compile Include="Migrations\201911270413553_addedIsActiveBack-v2.Designer.cs">
+      <DependentUpon>201911270413553_addedIsActiveBack-v2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911270416397_removedIsActivev2.cs" />
+    <Compile Include="Migrations\201911270416397_removedIsActivev2.Designer.cs">
+      <DependentUpon>201911270416397_removedIsActivev2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911270417388_addedIsActiveBack-v3.cs" />
+    <Compile Include="Migrations\201911270417388_addedIsActiveBack-v3.Designer.cs">
+      <DependentUpon>201911270417388_addedIsActiveBack-v3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -367,6 +391,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201911232007467_AddedRestrictionsToRequests.resx">
       <DependentUpon>201911232007467_AddedRestrictionsToRequests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911270400451_addedIsActive.resx">
+      <DependentUpon>201911270400451_addedIsActive.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911270404209_removedIsActive.resx">
+      <DependentUpon>201911270404209_removedIsActive.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911270405340_addedIsActiveBack.resx">
+      <DependentUpon>201911270405340_addedIsActiveBack.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911270413553_addedIsActiveBack-v2.resx">
+      <DependentUpon>201911270413553_addedIsActiveBack-v2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911270416397_removedIsActivev2.resx">
+      <DependentUpon>201911270416397_removedIsActivev2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911270417388_addedIsActiveBack-v3.resx">
+      <DependentUpon>201911270417388_addedIsActiveBack-v3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
