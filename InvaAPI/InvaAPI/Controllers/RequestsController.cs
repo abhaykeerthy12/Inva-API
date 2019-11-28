@@ -6,6 +6,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -109,7 +110,22 @@ namespace InvaAPI.Controllers
 
             // sent mail to admins
 
-            return CreatedAtRoute("DefaultApi", new { id = request.Id }, request);
+            var productName = db.Products.Where(p => p.Id.ToString() == request.ProductId).SingleOrDefault()?.Name;
+            var employeeName = db.Users.Where(u => u.Id.ToString() == request.EmployeeId).SingleOrDefault()?.Name;
+
+
+            if (sendEmailViaWebApi("New Request", 
+                                "A New Request For " + request.Quantity + " " + productName +  
+                                "  is recevied from " + employeeName + ". Check The Inva App For More Info", "abhaykeerthy12@gmail.com"))
+            {
+                return CreatedAtRoute("DefaultApi", new { id = request.Id }, request);
+
+            }
+            else
+            {
+                return Ok("Email not send!");
+            }
+
         }
 
         // DELETE: api/Requests/5
@@ -126,6 +142,38 @@ namespace InvaAPI.Controllers
             await db.SaveChangesAsync().ConfigureAwait(true);
 
             return Ok(request);
+        }
+
+        private bool sendEmailViaWebApi(string subjecttext, string bodytext, string senderid)
+        {
+            SmtpClient client = new SmtpClient();
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.EnableSsl = true;
+            client.Host = "smtp.gmail.com";
+            client.Port = 587;
+            // setup Smtp authentication
+            System.Net.NetworkCredential credentials =
+                new System.Net.NetworkCredential("invainventorysolution@gmail.com", "invaabhay12");
+            client.UseDefaultCredentials = false;
+            client.Credentials = credentials;
+            //can be obtained from your model
+            MailMessage msg = new MailMessage();
+            msg.From = new MailAddress("invainventorysolution@gmail.com");
+            msg.To.Add(new MailAddress(senderid));
+
+            msg.Subject = subjecttext;
+            msg.IsBodyHtml = true;
+            msg.Body = string.Format("<html><head></head><body><b>"+ bodytext +"</b></body>");
+            try
+            {
+                client.Send(msg);
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+                return false;
+            }
         }
 
         protected override void Dispose(bool disposing)
