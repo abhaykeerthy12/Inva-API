@@ -75,6 +75,17 @@ namespace InvaAPI.Controllers
             try
             {
                 await db.SaveChangesAsync().ConfigureAwait(false);
+
+                // sent mail to users
+                var productName = db.Products.Where(p => p.Id.ToString() == request.ProductId).SingleOrDefault()?.Name;
+                var employeeName = db.Users.Where(u => u.Id.ToString() == request.EmployeeId).SingleOrDefault()?.Name;
+
+                var unit = request.Quantity == 1 ? "unit" : "units";
+
+                var subject = $"Request {request.Status}";
+                var body = $"Hi {employeeName}, Your Request For {request.Quantity} {unit} of {productName} is {request.Status} by Admin. Check The Inva App For More Info!";
+
+                sendEmailViaWebApi(subject, body, "abhaykeerthy12@gmail.com");
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -113,10 +124,11 @@ namespace InvaAPI.Controllers
             var productName = db.Products.Where(p => p.Id.ToString() == request.ProductId).SingleOrDefault()?.Name;
             var employeeName = db.Users.Where(u => u.Id.ToString() == request.EmployeeId).SingleOrDefault()?.Name;
 
+            var unit = request.Quantity == 1 ? "unit" : "units";
 
-            if (sendEmailViaWebApi("New Request", 
-                                "A New Request For " + request.Quantity + " " + productName +  
-                                "  is recevied from " + employeeName + ". Check The Inva App For More Info", "abhaykeerthy12@gmail.com"))
+            var body = $" A New Request For {request.Quantity} {unit} of {productName} is recevied from {employeeName}. Check The Inva App For More Info!";
+
+            if (sendEmailViaWebApi("New Request", body , "abhaykeerthy12@gmail.com"))
             {
                 return CreatedAtRoute("DefaultApi", new { id = request.Id }, request);
 
